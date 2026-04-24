@@ -37,10 +37,11 @@ public class Order {
     @JoinColumn(name = "user_id" ,nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "order" , cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order" , cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    @OneToOne(mappedBy = "order" , cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
+    @JoinColumn(name = "payment_id", referencedColumnName = "id", nullable = true)
     private Payment payment;
 
 

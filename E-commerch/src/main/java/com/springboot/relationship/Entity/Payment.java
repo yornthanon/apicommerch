@@ -32,8 +32,7 @@ public class Payment {
     @Column(nullable = false)
     private String status;
 
-    @OneToOne
-    @JoinColumn(name = "order_id" )
+    @OneToOne(mappedBy = "payment")
     private Order order;
 
 }

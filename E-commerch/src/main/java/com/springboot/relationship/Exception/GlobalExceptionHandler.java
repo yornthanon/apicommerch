@@ -43,6 +43,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
         Map<String, String> errors = new HashMap<>();
         errors.put("message", "Invalid request data violates database constraints");
+        Throwable root = ex.getMostSpecificCause();
+        if (root != null && root.getMessage() != null && !root.getMessage().isBlank()) {
+            errors.put("detail", root.getMessage());
+        }
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
@@ -51,6 +55,20 @@ public class GlobalExceptionHandler {
         Map<String, String>  errors = new HashMap<>();
         errors.put("message", ex.getMessage());
         return new ResponseEntity<>(errors, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> handleUnhandledException(Exception ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", "Internal server error");
+        if (ex.getMessage() != null && !ex.getMessage().isBlank()) {
+            errors.put("detail", ex.getMessage());
+        }
+        Throwable root = ex.getCause();
+        if (root != null && root.getMessage() != null && !root.getMessage().isBlank()) {
+            errors.put("cause", root.getMessage());
+        }
+        return new ResponseEntity<>(errors, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }
